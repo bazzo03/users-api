@@ -19,7 +19,7 @@ object Main extends SprayJsonSupport with DefaultJsonProtocol {
     implicit val executionContext = system.dispatcher
 
     val route =
-      UsersRoute().route
+      UsersRoute.route
 
     val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
 
