@@ -24,30 +24,24 @@ object UsersRoute extends Directives with SprayJsonSupport with DefaultJsonProto
       get {
         path(LongNumber) { id =>
           onComplete(UserService.findUser(id)) {
-            case Success(s) => s match {
-              case Some(user) => complete(user)
-              case None => complete(StatusCodes.NotFound)
-            }
+            case Success(Some(user)) => complete(user)
+            case Success(None) => complete(StatusCodes.NotFound)
             case Failure(f) => complete(StatusCodes.InternalServerError)
           }
         }
       } ~
         (post & entity(as[User])) { user =>
           onComplete(UserService.saveUser(user)) {
-            case Success(s) => s match {
-              case Some(id) => complete(StatusCodes.Created)
-              case None => complete(StatusCodes.NotFound)
-            }
+            case Success(Some(user)) => complete(StatusCodes.Created)
+            case Success(None) => complete(StatusCodes.NotFound)
             case Failure(f) => complete(StatusCodes.InternalServerError)
           }
         } ~
         (put & entity(as[User])) { user =>
           path(LongNumber) { id =>
             onComplete(UserService.updateUser(id, user)) {
-              case Success(s) => s match {
-                case Some(_) => complete(StatusCodes.OK)
-                case None => complete(StatusCodes.NotFound)
-              }
+              case Success(Some(user)) => complete(StatusCodes.OK)
+              case Success(None) => complete(StatusCodes.NotFound)
               case Failure(f) => complete(StatusCodes.InternalServerError)
             }
           }
