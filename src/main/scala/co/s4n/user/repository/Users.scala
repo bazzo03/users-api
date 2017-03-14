@@ -11,9 +11,9 @@ import scala.concurrent.Future
 /**
  * Created by seven4n on 13/02/17.
  */
-abstract class Users extends CassandraTable[ConcreteUsers, User] {
+abstract class Users extends CassandraTable[Users, User] with RootConnector {
 
-  override def tableName(): String = "users"
+  override lazy val tableName: String = "users"
 
   object Id extends LongColumn(this) with PartitionKey
 
@@ -24,9 +24,6 @@ abstract class Users extends CassandraTable[ConcreteUsers, User] {
   object Ip extends StringColumn(this)
 
   override def fromRow(r: Row): User = User(Id(r), Name(r), Lastname(r), Ip(r))
-}
-
-abstract class ConcreteUsers extends Users with RootConnector {
 
   def findUser(id: Long): Future[Option[User]] = {
     select
@@ -36,6 +33,7 @@ abstract class ConcreteUsers extends Users with RootConnector {
   }
 
   def saveUser(user: User): Future[ResultSet] = {
+    println("\n\n\nWAAAAAAAAAAAAAAAA")
     insert
       .value(_.Id, user.id)
       .value(_.Name, user.name)

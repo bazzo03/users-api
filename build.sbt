@@ -25,7 +25,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka"   %%  "akka-http"                    % "10.0.4",
 
   // dependecies for phantom
-  "com.outworkers" % "phantom-dsl_2.11" % "2.3.1"
+  "com.outworkers" %% "phantom-dsl" % "2.3.1"
 
 )
 

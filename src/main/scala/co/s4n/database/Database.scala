@@ -1,17 +1,17 @@
 package co.s4n.database
 
 import co.s4n.connector.Connector
-import co.s4n.user.repository.ConcreteUsers
-import com.outworkers.phantom.connectors.CassandraConnection
+import co.s4n.user.repository.Users
 import com.outworkers.phantom.database.Database
+import com.outworkers.phantom.dsl.KeySpaceDef
 
 /**
  * Created by seven4n on 13/02/17.
  */
-class MyDatabase(override val connector: CassandraConnection)
+class MyDatabase(override val connector: KeySpaceDef)
     extends Database[MyDatabase](connector) {
 
-  object Users extends ConcreteUsers with connector.Connector
+  object Users extends Users with connector.Connector
 }
 
 object MyDatabase extends MyDatabase(Connector.connector)
