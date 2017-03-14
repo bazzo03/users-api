@@ -15,13 +15,10 @@ import scala.util.{ Failure, Success }
 /**
  * Created by seven4n on 20/02/17.
  */
-//noinspection ScalaStyle
+
 case class UsersRoute(implicit val executionContext: ExecutionContext) extends Directives with SprayJsonSupport with DefaultJsonProtocol {
-
   def route: Route = {
-
     implicit val userFormat = jsonFormat4(User)
-
     pathPrefix("users") {
       get {
         path(LongNumber) { id =>
@@ -30,7 +27,7 @@ case class UsersRoute(implicit val executionContext: ExecutionContext) extends D
               case Some(user) => complete(user)
               case None => complete(StatusCodes.NotFound)
             }
-            case Failure(f) => complete(StatusCodes.NotFound)
+            case Failure(f) => complete(StatusCodes.InternalServerError)
           }
         }
       } ~
@@ -40,7 +37,7 @@ case class UsersRoute(implicit val executionContext: ExecutionContext) extends D
               case Some(id) => complete(StatusCodes.Created)
               case None => complete(StatusCodes.NotFound)
             }
-            case Failure(f) => complete(StatusCodes.NotFound)
+            case Failure(f) => complete(StatusCodes.InternalServerError)
           }
         } ~
         (put & entity(as[User])) { user =>
@@ -50,7 +47,7 @@ case class UsersRoute(implicit val executionContext: ExecutionContext) extends D
                 case Some(_) => complete(StatusCodes.OK)
                 case None => complete(StatusCodes.NotFound)
               }
-              case Failure(f) => complete(StatusCodes.NotFound)
+              case Failure(f) => complete(StatusCodes.InternalServerError)
             }
           }
         } ~
@@ -61,7 +58,7 @@ case class UsersRoute(implicit val executionContext: ExecutionContext) extends D
                 case Some(_) => complete(StatusCodes.OK)
                 case None => complete(StatusCodes.NotFound)
               }
-              case Failure(f) => complete(StatusCodes.NotFound)
+              case Failure(f) => complete(StatusCodes.InternalServerError)
             }
           }
         }
