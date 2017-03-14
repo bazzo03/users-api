@@ -1,11 +1,11 @@
-package co.s4n.repository2
+package co.s4n.user.repository
 
-import co.s4n.entity.User
+import co.s4n.user.entity.User
 
 /**
  * Created by seven4n on 13/03/17.
  */
-object UserDao {
+object UserRepository {
 
   def saveUser(user: User): Option[Long] = Option(user.id)
 

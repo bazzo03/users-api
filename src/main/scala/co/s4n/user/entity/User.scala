@@ -1,4 +1,4 @@
-package co.s4n.entity
+package co.s4n.user.entity
 
 /**
  * Created by seven4n on 13/03/17.

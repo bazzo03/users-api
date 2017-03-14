@@ -10,17 +10,23 @@ scalaVersion := "2.12.1"
 
 resolvers ++= Seq(
   "releases" at "http://oss.sonatype.org/content/repositories/releases"
+
 )
 
 libraryDependencies ++= Seq(
-  "com.typesafe.scala-logging"  %%  "scala-logging"             % "3.5.0"     withSources() withJavadoc(),
-  "com.iheart"                  %%  "ficus"                     % "1.4.0", 
+  "com.typesafe.scala-logging"  %%  "scala-logging"             % "3.5.0"
+    withSources() withJavadoc(),
+  "com.iheart"                  %%  "ficus"                     % "1.4.0",
   "ch.qos.logback"              %   "logback-classic"           % "1.1.7",
   "org.scalatest"               %   "scalatest_2.12"            % "3.0.0"     % "test",
 
-  //dependencies for akka-http
+  // dependencies for akka-http
   "com.typesafe.akka"   %%  "akka-http-spray-json"         % "10.0.4",
-  "com.typesafe.akka"   %%  "akka-http"                    % "10.0.4"
+  "com.typesafe.akka"   %%  "akka-http"                    % "10.0.4",
+
+  // dependecies for phantom
+  "com.outworkers" % "phantom-dsl_2.11" % "2.3.1"
+
 )
 
 coverageEnabled := false
