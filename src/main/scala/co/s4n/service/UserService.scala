@@ -20,15 +20,15 @@ object UserService {
     }
   }
 
-  def updateUser(user: User): Future[Option[User]] = {
+  def updateUser(id: Long, user: User): Future[Option[User]] = {
     Future {
       UserDao.updateUser(user)
     }
   }
 
-  def deleteUser(user: User): Future[Option[Boolean]] = {
+  def deleteUser(userId: Long): Future[Option[Boolean]] = {
     Future {
-      UserDao.deleteUser(user)
+      UserDao.deleteUser(userId)
     }
   }
 

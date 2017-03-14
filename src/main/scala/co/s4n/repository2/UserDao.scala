@@ -13,6 +13,6 @@ object UserDao {
 
   def updateUser(user: User): Option[User] = Option(user)
 
-  def deleteUser(user: User): Option[Boolean] = Option(true)
+  def deleteUser(userId: Long): Option[Boolean] = Option(true)
 
 }
