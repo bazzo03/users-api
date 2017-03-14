@@ -1,4 +1,4 @@
-package co.s4n.connector
+package co.s4n.infrastructure.connector
 
 import com.outworkers.phantom.connectors.{ CassandraConnection, ContactPoint, ContactPoints }
 import com.typesafe.config.ConfigFactory

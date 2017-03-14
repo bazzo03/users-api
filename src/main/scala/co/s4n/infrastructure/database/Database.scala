@@ -1,7 +1,7 @@
-package co.s4n.database
+package co.s4n.infrastructure.database
 
-import co.s4n.connector.Connector
-import co.s4n.user.repository.Users
+import co.s4n.infrastructure.connector.Connector
+import co.s4n.user.dao.UsersDao
 import com.outworkers.phantom.database.Database
 import com.outworkers.phantom.dsl.KeySpaceDef
 
@@ -11,7 +11,8 @@ import com.outworkers.phantom.dsl.KeySpaceDef
 class MyDatabase(override val connector: KeySpaceDef)
     extends Database[MyDatabase](connector) {
 
-  object Users extends Users with connector.Connector
+  object Users extends UsersDao with connector.Connector
+
 }
 
 object MyDatabase extends MyDatabase(Connector.connector)

@@ -4,7 +4,7 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.{ Directives, Route }
 import co.s4n.user.entity.User
-import co.s4n.user.service.UserService
+import co.s4n.user.repository.UserRepository
 import spray.json.DefaultJsonProtocol
 
 import scala.util.{ Failure, Success }
@@ -23,35 +23,37 @@ object UsersRoute extends Directives with SprayJsonSupport with DefaultJsonProto
     pathPrefix("users") {
       get {
         path(LongNumber) { id =>
-          onComplete(UserService.findUser(id)) {
+          onComplete(UserRepository.findUser(id)) {
             case Success(Some(user)) => complete(user)
             case Success(None) => complete(StatusCodes.NotFound)
             case Failure(_) => complete(StatusCodes.InternalServerError)
           }
         }
       } ~
+        get {
+          onComplete(UserRepository.findAllUsers()) {
+            case Success(users) => complete(users)
+            case Failure(_) => complete(StatusCodes.InternalServerError)
+          }
+        } ~
         (post & entity(as[User])) { user =>
-          onComplete(UserService.saveUser(user)) {
+          onComplete(UserRepository.saveUser(user)) {
             case Success(_) => complete(StatusCodes.Created)
             case Failure(_) => complete(StatusCodes.InternalServerError)
           }
         } ~
         (put & entity(as[User])) { user =>
           path(LongNumber) { id =>
-            onComplete(UserService.updateUser(id, user)) {
-              case Success(Some(_)) => complete(StatusCodes.OK)
-              case Success(None) => complete(StatusCodes.NotFound)
+            onComplete(UserRepository.updateUser(id, user)) {
+              case Success(_) => complete(StatusCodes.OK)
               case Failure(_) => complete(StatusCodes.InternalServerError)
             }
           }
         } ~
         delete {
           path(LongNumber) { id =>
-            onComplete(UserService.deleteUser(id)) {
-              case Success(s) => s match {
-                case Some(_) => complete(StatusCodes.OK)
-                case None => complete(StatusCodes.NotFound)
-              }
+            onComplete(UserRepository.deleteUser(id)) {
+              case Success(_) => complete(StatusCodes.OK)
               case Failure(_) => complete(StatusCodes.InternalServerError)
             }
           }

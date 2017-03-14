@@ -1,4 +1,4 @@
-package co.s4n.user.repository
+package co.s4n.user.dao
 
 import co.s4n.user.entity.User
 import com.datastax.driver.core.Row
@@ -11,7 +11,7 @@ import scala.concurrent.Future
 /**
  * Created by seven4n on 13/02/17.
  */
-abstract class Users extends CassandraTable[Users, User] with RootConnector {
+abstract class UsersDao extends CassandraTable[UsersDao, User] with RootConnector {
 
   override lazy val tableName: String = "users"
 
@@ -33,7 +33,6 @@ abstract class Users extends CassandraTable[Users, User] with RootConnector {
   }
 
   def saveUser(user: User): Future[ResultSet] = {
-    println("\n\n\nWAAAAAAAAAAAAAAAA")
     insert
       .value(_.Id, user.id)
       .value(_.Name, user.name)
@@ -43,7 +42,13 @@ abstract class Users extends CassandraTable[Users, User] with RootConnector {
       .future()
   }
 
-  def getAllUsers(): Future[List[User]] = {
+  def deleteUser(userId: Long): Future[ResultSet] = {
+    delete
+      .where(_.Id eqs userId)
+      .future()
+  }
+
+  def findAllUsers(): Future[List[User]] = {
     select
       .consistencyLevel_=(ConsistencyLevel.ALL)
       .fetch()

@@ -1,18 +1,34 @@
 package co.s4n.user.repository
 
+import co.s4n.infrastructure.database.UsersDatabase
 import co.s4n.user.entity.User
+import com.outworkers.phantom.dsl.ResultSet
 
-/**
- * Created by seven4n on 13/03/17.
- */
-object UserRepository {
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.{ Failure, Success }
 
-  def saveUser(user: User): Option[Long] = Option(user.id)
+object UserRepository extends UsersDatabase {
 
-  def findUser(id: Long): Option[User] = Option(User(1, "Daniel", "Bernal", "127.0.0.1"))
+  def findUser(id: Long): Future[Option[User]] = {
+    database.Users.findUser(id)
+  }
 
-  def updateUser(user: User): Option[User] = Option(user)
+  def findAllUsers(): Future[List[User]] = {
+    database.Users.findAllUsers()
+  }
 
-  def deleteUser(userId: Long): Option[Boolean] = Option(true)
+  def saveUser(user: User): Future[ResultSet] = {
+    database.Users.saveUser(user)
+  }
+
+  def updateUser(id: Long, user: User): Future[ResultSet] = {
+    database.Users.saveUser(user)
+  }
+
+  def deleteUser(userId: Long): Future[ResultSet] = {
+    database.Users.deleteUser(userId)
+  }
 
 }
+
