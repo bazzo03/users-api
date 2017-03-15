@@ -14,7 +14,10 @@ trait UsersDbProvider extends DatabaseProvider[UserDataBase] {
 abstract class TestSpec
   extends FlatSpec
   with Matchers
+  with Inspectors
   with ScalaFutures
+  with OptionValues
+  with BeforeAndAfterAll
 
 trait TestSuite extends TestSpec
     with UsersDbProvider with UserDataBase.Connector {
