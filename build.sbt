@@ -24,8 +24,12 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka"   %%  "akka-http-spray-json"         % "10.0.4",
   "com.typesafe.akka"   %%  "akka-http"                    % "10.0.4",
 
+  // dependency for akka-http unit testing
+  "com.typesafe.akka" %% "akka-http-testkit" % "10.0.4",
+
   // dependecies for phantom
   "com.outworkers" %% "phantom-dsl" % "2.3.1"
+
 
 )
 

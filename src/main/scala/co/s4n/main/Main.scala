@@ -2,19 +2,17 @@ package co.s4n.main
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
-import co.s4n.user.controller.UsersRoute
-import spray.json.DefaultJsonProtocol
+import co.s4n.user.route.UsersRoute
 
 import scala.io.StdIn
 
-object Main extends SprayJsonSupport with DefaultJsonProtocol {
+object Main {
 
   def main(args: Array[String]): Unit = {
 
-    implicit val system = ActorSystem("simple-rest-system")
+    implicit val system = ActorSystem("users-rest-system")
     implicit val materializer = ActorMaterializer()
     implicit val executionContext = system.dispatcher
 

@@ -1,4 +1,4 @@
-package co.s4n.user.controller
+package co.s4n.user.route
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.model.StatusCodes
