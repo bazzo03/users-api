@@ -12,7 +12,7 @@ trait CassandraSpec extends TestSuite {
 
   override def beforeAll(): Unit = {
     EmbeddedCassandraServerHelper
-      .startEmbeddedCassandra("embedded-cassandra.yaml", 60.seconds.toMillis)
+      .startEmbeddedCassandra("embedded-cassandra.yaml", 120.seconds.toMillis)
     database.create(5.seconds)
     super.beforeAll()
   }

@@ -25,7 +25,7 @@ class UsersRouteSpec extends WordSpec with Matchers with ScalatestRouteTest {
         """.stripMargin
       )
       val httpEntity = HttpEntity(ContentTypes.`application/json`, jsonRequest)
-      Post("/users", httpEntity) ~> Route.seal(UsersRoute.route) ~> check {
+      Post("/users", httpEntity) ~> UsersRoute.route ~> check {
         status === StatusCodes.Created
       }
     }
@@ -42,7 +42,7 @@ class UsersRouteSpec extends WordSpec with Matchers with ScalatestRouteTest {
         """.stripMargin
       )
       val httpEntity = HttpEntity(ContentTypes.`application/json`, jsonRequest)
-      Post("/users", httpEntity) ~> Route.seal(UsersRoute.route) ~> check {
+      Post("/users", httpEntity) ~> UsersRoute.route ~> check {
         status === StatusCodes.Created
       }
     }

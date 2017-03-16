@@ -29,6 +29,15 @@ object UsersRoute extends Directives with SprayJsonSupport with DefaultJsonProto
             case Failure(_) => complete(StatusCodes.InternalServerError)
           }
         }
+      }
+      get {
+        path(LongNumber) { id =>
+          onComplete(UserRepository.findUser(id)) {
+            case Success(Some(user)) => complete(user)
+            case Success(None) => complete(StatusCodes.NotFound)
+            case Failure(_) => complete(StatusCodes.InternalServerError)
+          }
+        }
       } ~
         get {
           onComplete(UserRepository.findAllUsers()) {
