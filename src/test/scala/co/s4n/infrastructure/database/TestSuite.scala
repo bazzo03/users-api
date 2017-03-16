@@ -20,7 +20,7 @@ abstract class TestSpec
   with BeforeAndAfterAll
 
 trait TestSuite extends TestSpec
-    with UsersDbProvider with UserDataBase.Connector {
+    with UserTestDbProvider with UserTestDataBase.Connector {
 
   implicit val ec = scala.concurrent.ExecutionContext.global
 }

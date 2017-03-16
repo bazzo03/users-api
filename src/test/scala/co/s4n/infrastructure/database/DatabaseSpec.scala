@@ -4,7 +4,7 @@ import co.s4n.user.entity.User
 /**
  * Created by seven4n on 15/03/17.
  */
-class DatabaseSpec extends TestSuite {
+class DatabaseSpec extends CassandraSpec {
 
   it should "Create a new User and query it - DB" in {
     val user = User(111, "UserName", "Lastname", "127.0.0.1")

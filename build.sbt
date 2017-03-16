@@ -10,7 +10,6 @@ scalaVersion := "2.12.1"
 
 resolvers ++= Seq(
   "releases" at "http://oss.sonatype.org/content/repositories/releases"
-
 )
 
 libraryDependencies ++= Seq(
@@ -28,7 +27,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-http-testkit" % "10.0.4",
 
   // dependecies for phantom
-  "com.outworkers" %% "phantom-dsl" % "2.3.1"
+  "com.outworkers" %% "phantom-dsl" % "2.3.1",
+  "org.cassandraunit" % "cassandra-unit" % "3.1.1.0" % "it,test"
 
 
 )

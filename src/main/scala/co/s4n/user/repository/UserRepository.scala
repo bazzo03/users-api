@@ -1,15 +1,11 @@
 package co.s4n.user.repository
 
-import co.s4n.infrastructure.database.UserDataBase
+import co.s4n.infrastructure.database.{ UserDataBase, UserDbProvider }
 import co.s4n.user.entity.User
 import com.outworkers.phantom.database.DatabaseProvider
 import com.outworkers.phantom.dsl.ResultSet
 
 import scala.concurrent.Future
-
-trait UserDbProvider extends DatabaseProvider[UserDataBase] {
-  override def database: UserDataBase = UserDataBase
-}
 
 object UserRepository extends UserDbProvider with UserDataBase.Connector {
 
