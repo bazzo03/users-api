@@ -1,27 +1,21 @@
 package co.s4n.user.route
 
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import akka.http.scaladsl.model.{ HttpResponse, StatusCode, StatusCodes }
-import akka.http.scaladsl.server.{ Directives, Route }
-import co.s4n.user.entity.User
+import akka.http.scaladsl.model.{StatusCode, StatusCodes}
+import akka.http.scaladsl.server.Directives
+import co.s4n.user.entity._
 import co.s4n.user.repository.UserRepository
-import spray.json.DefaultJsonProtocol
+import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
+import io.circe.generic.auto._
 
 import scala.concurrent.Future
-import scala.util.{ Failure, Success }
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.{Failure, Success}
 
-/**
- * Created by seven4n on 20/02/17.
- */
+object UsersRoute extends Directives {
 
-object UsersRoute extends Directives with SprayJsonSupport with DefaultJsonProtocol {
+  import scala.concurrent.ExecutionContext.Implicits.global
 
   //noinspection ScalaStyle
   def route = {
-
-    implicit val userFormat = jsonFormat4(User)
-
     pathPrefix("users") {
       /*get {
         path(LongNumber) { id =>
@@ -35,13 +29,13 @@ object UsersRoute extends Directives with SprayJsonSupport with DefaultJsonProto
       get {
         path(LongNumber) { id =>
           val f: Future[Option[User]] = UserRepository.findUser(id)
-          val a = f.map {
-            case Some(s) => StatusCodes.OK
-            case None => StatusCodes.NotFound
+          val r: Future[(StatusCode, UserServiceProtocol)] = f.map {
+            case Some(u) => (StatusCodes.OK, UserFound(u))
+            case None => (StatusCodes.NotFound, UserNotFound(""))
+          }.recover {
+            case e: Exception => (StatusCodes.InternalServerError, DatabaseConnectionFailed(""))
           }
-
-          //          val htt = HttpResponse(a, )
-          complete(a)
+          complete(r)
         }
       }
       get {
