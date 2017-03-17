@@ -1,13 +1,15 @@
 package co.s4n.user.route
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.model.{ HttpResponse, StatusCode, StatusCodes }
 import akka.http.scaladsl.server.{ Directives, Route }
 import co.s4n.user.entity.User
 import co.s4n.user.repository.UserRepository
 import spray.json.DefaultJsonProtocol
 
+import scala.concurrent.Future
 import scala.util.{ Failure, Success }
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * Created by seven4n on 20/02/17.
@@ -16,18 +18,30 @@ import scala.util.{ Failure, Success }
 object UsersRoute extends Directives with SprayJsonSupport with DefaultJsonProtocol {
 
   //noinspection ScalaStyle
-  def route: Route = {
+  def route = {
 
     implicit val userFormat = jsonFormat4(User)
 
     pathPrefix("users") {
-      get {
+      /*get {
         path(LongNumber) { id =>
           onComplete(UserRepository.findUser(id)) {
             case Success(Some(user)) => complete(user)
             case Success(None) => complete(StatusCodes.NotFound)
             case Failure(_) => complete(StatusCodes.InternalServerError)
           }
+        }
+      }*/
+      get {
+        path(LongNumber) { id =>
+          val f: Future[Option[User]] = UserRepository.findUser(id)
+          val a = f.map {
+            case Some(s) => StatusCodes.OK
+            case None => StatusCodes.NotFound
+          }
+
+          //          val htt = HttpResponse(a, )
+          complete(a)
         }
       }
       get {
