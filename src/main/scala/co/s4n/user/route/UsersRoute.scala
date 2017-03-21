@@ -1,81 +1,81 @@
 package co.s4n.user.route
 
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.model.{ StatusCode, StatusCodes }
 import akka.http.scaladsl.server.Directives
 import co.s4n.infrastructure.kafka.Producer
-import co.s4n.user.entity._
+import co.s4n.user.entity.User
 import co.s4n.user.repository.UserRepository
-import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
-import io.circe.generic.auto._
+import com.outworkers.phantom.dsl.ResultSet
+import spray.json.DefaultJsonProtocol
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.{ Failure, Success }
 
-object UsersRoute extends Directives {
+/**
+ * Created by seven4n on 20/02/17.
+ */
 
-  import scala.concurrent.ExecutionContext.Implicits.global
+object UsersRoute extends Directives with SprayJsonSupport with DefaultJsonProtocol {
 
   //noinspection ScalaStyle
   def route = {
+
+    implicit val userFormat = jsonFormat4(User)
+
     pathPrefix("users") {
-      /*get {
-        path(LongNumber) { id =>
-          onComplete(UserRepository.findUser(id)) {
-            case Success(Some(user)) => complete(user)
-            case Success(None) => complete(StatusCodes.NotFound)
-            case Failure(_) => complete(StatusCodes.InternalServerError)
-          }
-        }
-      }*/
       get {
         path(LongNumber) { id =>
-          val f: Future[Option[User]] = UserRepository.findUser(id)
-          val r: Future[(StatusCode, UserServiceProtocol)] = f.map {
-            case Some(u) =>
-              Producer.produceKafka("Query message " + u)
-              (StatusCodes.OK, UserFound(u))
-            case None => (StatusCodes.NotFound, UserNotFound(""))
-          }.recover {
-            case e: Exception => (StatusCodes.InternalServerError, DatabaseConnectionFailed(""))
+          val future: Future[Option[User]] = UserRepository.findUser(id)
+          val response: Future[(StatusCode, User)] = future.map {
+            case Some(user) =>
+              Producer.produceKafka("User was consulted: " + user)
+              (StatusCodes.OK, user)
+            case None =>
+              Producer.produceKafka("Attempt to consult user, but no user found. Id was : " + id)
+              (StatusCodes.NotFound, User(0, "", "", ""))
           }
-          complete(r)
-        }
-      }
-      get {
-        path(LongNumber) { id =>
-          onComplete(UserRepository.findUser(id)) {
-            case Success(Some(user)) => complete(user)
-            case Success(None) => complete(StatusCodes.NotFound)
-            case Failure(_) => complete(StatusCodes.InternalServerError)
-          }
+          complete(response)
         }
       } ~
         get {
-          onComplete(UserRepository.findAllUsers()) {
-            case Success(users) => complete(users)
-            case Failure(_) => complete(StatusCodes.InternalServerError)
+          val future: Future[List[User]] = UserRepository.findAllUsers()
+          val response: Future[(StatusCode, List[User])] = future.map {
+            case x :: xs =>
+              Producer.produceKafka("All the users were consulted")
+              (StatusCodes.OK, x :: xs)
+            case Nil =>
+              Producer.produceKafka("Attempt to consult all the users. None was found")
+              (StatusCodes.NotFound, Nil)
           }
+          complete(response)
         } ~
         (post & entity(as[User])) { user =>
-          onComplete(UserRepository.saveUser(user)) {
-            case Success(_) => complete(StatusCodes.Created)
-            case Failure(_) => complete(StatusCodes.InternalServerError)
+          val future: Future[ResultSet] = UserRepository.saveUser(user)
+          val response = future.map {
+            Producer.produceKafka("User was created: " + user)
+            _ => StatusCodes.Created
           }
+          complete(response)
         } ~
         (put & entity(as[User])) { user =>
           path(LongNumber) { id =>
-            onComplete(UserRepository.updateUser(id, user)) {
-              case Success(_) => complete(StatusCodes.OK)
-              case Failure(_) => complete(StatusCodes.InternalServerError)
+            val future = UserRepository.updateUser(id, user)
+            val response = future.map {
+              Producer.produceKafka("User was updated: " + user)
+              _ => StatusCodes.OK
             }
+            complete(response)
           }
         } ~
         delete {
           path(LongNumber) { id =>
-            onComplete(UserRepository.deleteUser(id)) {
-              case Success(_) => complete(StatusCodes.OK)
-              case Failure(_) => complete(StatusCodes.InternalServerError)
+            val future = UserRepository.deleteUser(id)
+            val response = future.map {
+              Producer.produceKafka("User was deleted. Id was: " + id)
+              _ => StatusCodes.OK
             }
+            complete(response)
           }
         }
     }

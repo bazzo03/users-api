@@ -21,17 +21,17 @@ libraryDependencies ++= Seq(
 ).map(_ % circeVersion)
 
 libraryDependencies ++= Seq(
-  "com.typesafe.scala-logging"  %%  "scala-logging"             % "3.5.0",
-  "com.iheart"                  %%  "ficus"                     % "1.4.0",
-  "ch.qos.logback"              %   "logback-classic"           % "1.1.7",
-  "org.scalatest"               %   "scalatest_2.12"            % "3.0.0"     % "test",
-  "de.heikoseeberger" %% "akka-http-circe" % "1.13.0",
-  "com.typesafe.akka"   %%  "akka-http"                    % "10.0.4",
-  "com.typesafe.akka" %% "akka-http-testkit" % "10.0.4",
-  "com.typesafe.akka"   %%  "akka-http-spray-json"         % "10.0.4",
-  "com.outworkers" %% "phantom-dsl" % "2.3.1",
-  "org.cassandraunit" % "cassandra-unit" % "3.1.1.0" % "it,test",
-  "org.apache.kafka" % "kafka-clients" % "0.10.2.0"
+  "com.typesafe.scala-logging"  %%  "scala-logging"                 % "3.5.0",
+  "com.iheart"                  %%  "ficus"                         % "1.4.0",
+  "ch.qos.logback"              %   "logback-classic"               % "1.1.7",
+  "org.scalatest"               %   "scalatest_2.12"                % "3.0.0"     % "test",
+  "de.heikoseeberger"           %%  "akka-http-circe"               % "1.13.0",
+  "com.typesafe.akka"           %%  "akka-http"                     % "10.0.4",
+  "com.typesafe.akka"           %%  "akka-http-testkit"             % "10.0.4",
+  "com.typesafe.akka"           %%  "akka-http-spray-json"          % "10.0.4",
+  "com.outworkers"              %%  "phantom-dsl"                   % "2.3.1",
+  "org.cassandraunit"           %   "cassandra-unit"                % "3.1.1.0"   % "it,test",
+  "org.apache.kafka"            %   "kafka-clients"                 % "0.10.2.0"
 )
 
 coverageEnabled := false
@@ -63,7 +63,7 @@ publishArtifact in Test := false
 publishTo := {
   val nexus = "http://somewhere/nexus/"
   if (version.value.trim.endsWith("SNAPSHOT"))
-    Some("Nexus Snapshots" at nexus + "content/repositories/snapshots/")    
+    Some("Nexus Snapshots" at nexus + "content/repositories/snapshots/")
   else
     Some("Nexus Releases" at nexus + "content/repositories/releases")
 }
