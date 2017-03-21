@@ -1,14 +1,15 @@
 package co.s4n.user.route
 
-import akka.http.scaladsl.model.{StatusCode, StatusCodes}
+import akka.http.scaladsl.model.{ StatusCode, StatusCodes }
 import akka.http.scaladsl.server.Directives
+import co.s4n.infrastructure.kafka.Producer
 import co.s4n.user.entity._
 import co.s4n.user.repository.UserRepository
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 import io.circe.generic.auto._
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
+import scala.util.{ Failure, Success }
 
 object UsersRoute extends Directives {
 
@@ -30,7 +31,9 @@ object UsersRoute extends Directives {
         path(LongNumber) { id =>
           val f: Future[Option[User]] = UserRepository.findUser(id)
           val r: Future[(StatusCode, UserServiceProtocol)] = f.map {
-            case Some(u) => (StatusCodes.OK, UserFound(u))
+            case Some(u) =>
+              Producer.produceKafka("Query message " + u)
+              (StatusCodes.OK, UserFound(u))
             case None => (StatusCodes.NotFound, UserNotFound(""))
           }.recover {
             case e: Exception => (StatusCodes.InternalServerError, DatabaseConnectionFailed(""))

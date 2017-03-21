@@ -28,8 +28,10 @@ libraryDependencies ++= Seq(
   "de.heikoseeberger" %% "akka-http-circe" % "1.13.0",
   "com.typesafe.akka"   %%  "akka-http"                    % "10.0.4",
   "com.typesafe.akka" %% "akka-http-testkit" % "10.0.4",
+  "com.typesafe.akka"   %%  "akka-http-spray-json"         % "10.0.4",
   "com.outworkers" %% "phantom-dsl" % "2.3.1",
-  "org.cassandraunit" % "cassandra-unit" % "3.1.1.0" % "it,test"
+  "org.cassandraunit" % "cassandra-unit" % "3.1.1.0" % "it,test",
+  "org.apache.kafka" % "kafka-clients" % "0.10.2.0"
 )
 
 coverageEnabled := false
