@@ -34,7 +34,9 @@ object UsersRoute extends Directives with SprayJsonSupport with DefaultJsonProto
             case None =>
               Producer.produceKafka("Attempt to consult user, but no user found. Id was : " + id)
               (StatusCodes.NotFound, User(0, "", "", ""))
-          }
+          }.recover {
+            case _ => (StatusCodes.InternalServerError, User(0, "", "", ""))
+        }
           complete(response)
         }
       } ~
@@ -47,6 +49,8 @@ object UsersRoute extends Directives with SprayJsonSupport with DefaultJsonProto
             case Nil =>
               Producer.produceKafka("Attempt to consult all the users. None was found")
               (StatusCodes.NotFound, Nil)
+          }.recover {
+            case _ => (StatusCodes.InternalServerError, List())
           }
           complete(response)
         } ~
@@ -55,6 +59,8 @@ object UsersRoute extends Directives with SprayJsonSupport with DefaultJsonProto
           val response = future.map {
             Producer.produceKafka("User was created: " + user)
             _ => StatusCodes.Created
+          }.recover {
+            case _ => StatusCodes.InternalServerError
           }
           complete(response)
         } ~
@@ -64,6 +70,8 @@ object UsersRoute extends Directives with SprayJsonSupport with DefaultJsonProto
             val response = future.map {
               Producer.produceKafka("User was updated: " + user)
               _ => StatusCodes.OK
+            }.recover {
+              case _ => StatusCodes.InternalServerError
             }
             complete(response)
           }
@@ -74,6 +82,8 @@ object UsersRoute extends Directives with SprayJsonSupport with DefaultJsonProto
             val response = future.map {
               Producer.produceKafka("User was deleted. Id was: " + id)
               _ => StatusCodes.OK
+            }.recover {
+              case _ => StatusCodes.InternalServerError
             }
             complete(response)
           }
