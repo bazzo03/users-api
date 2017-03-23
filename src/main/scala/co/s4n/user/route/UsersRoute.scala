@@ -5,7 +5,7 @@ import akka.http.scaladsl.model.{ StatusCode, StatusCodes }
 import akka.http.scaladsl.server.Directives
 import co.s4n.infrastructure.kafka.Producer
 import co.s4n.user.entity.User
-import co.s4n.user.repository.UserRepository
+import co.s4n.user.service.UserService
 import com.outworkers.phantom.dsl.ResultSet
 import spray.json.DefaultJsonProtocol
 
@@ -26,7 +26,7 @@ object UsersRoute extends Directives with SprayJsonSupport with DefaultJsonProto
     pathPrefix("users") {
       get {
         path(LongNumber) { id =>
-          val future: Future[Option[User]] = UserRepository.findUser(id)
+          val future: Future[Option[User]] = UserService.findUser(id)
           val response: Future[(StatusCode, User)] = future.map {
             case Some(user) =>
               Producer.produceKafka("User was consulted: " + user)
@@ -36,12 +36,12 @@ object UsersRoute extends Directives with SprayJsonSupport with DefaultJsonProto
               (StatusCodes.NotFound, User(0, "", "", ""))
           }.recover {
             case _ => (StatusCodes.InternalServerError, User(0, "", "", ""))
-        }
+          }
           complete(response)
         }
       } ~
         get {
-          val future: Future[List[User]] = UserRepository.findAllUsers()
+          val future: Future[List[User]] = UserService.findAllUsers()
           val response: Future[(StatusCode, List[User])] = future.map {
             case x :: xs =>
               Producer.produceKafka("All the users were consulted")
@@ -55,7 +55,7 @@ object UsersRoute extends Directives with SprayJsonSupport with DefaultJsonProto
           complete(response)
         } ~
         (post & entity(as[User])) { user =>
-          val future: Future[ResultSet] = UserRepository.saveUser(user)
+          val future: Future[ResultSet] = UserService.saveUser(user)
           val response = future.map {
             Producer.produceKafka("User was created: " + user)
             _ => StatusCodes.Created
@@ -66,7 +66,7 @@ object UsersRoute extends Directives with SprayJsonSupport with DefaultJsonProto
         } ~
         (put & entity(as[User])) { user =>
           path(LongNumber) { id =>
-            val future = UserRepository.updateUser(id, user)
+            val future = UserService.updateUser(id, user)
             val response = future.map {
               Producer.produceKafka("User was updated: " + user)
               _ => StatusCodes.OK
@@ -78,7 +78,7 @@ object UsersRoute extends Directives with SprayJsonSupport with DefaultJsonProto
         } ~
         delete {
           path(LongNumber) { id =>
-            val future = UserRepository.deleteUser(id)
+            val future = UserService.deleteUser(id)
             val response = future.map {
               Producer.produceKafka("User was deleted. Id was: " + id)
               _ => StatusCodes.OK

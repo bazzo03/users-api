@@ -2,11 +2,12 @@ package co.s4n.infrastructure.kafka
 
 import java.util.{ Date, Properties }
 
+import com.typesafe.scalalogging.LazyLogging
 import org.apache.kafka.clients.producer.{ KafkaProducer, ProducerRecord }
 
 import scala.util.Random
 
-object Producer {
+object Producer extends LazyLogging {
 
   val props = new Properties()
   props.put("bootstrap.servers", "localhost:9092")
@@ -23,15 +24,11 @@ object Producer {
     val producer = new KafkaProducer[String, String](props)
 
     for (nEvents <- Range(0, events)) {
-      val runtime = new Date().getTime()
       val data = new ProducerRecord[String, String](topic, msg)
 
-      //async
-      producer.send(data, (m, e) => {
-        println("\n\n MESSAGE SENT TO KAFKA!!!!\n\n")
+      producer.send(data, (_, _) => {
+        logger.info("Message sent to Kafka : " + msg)
       })
-      //sync
-      //      producer.send(data)
 
     }
     producer.close()
