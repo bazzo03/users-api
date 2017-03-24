@@ -1,10 +1,12 @@
 package co.s4n.infrastructure.kafka
 
-import java.util.{ Date, Properties }
+import java.util.Properties
 
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.kafka.clients.producer.{ KafkaProducer, ProducerRecord }
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.util.Random
 
 object Producer extends LazyLogging {
@@ -19,7 +21,7 @@ object Producer extends LazyLogging {
   val events = 1
   val topic: String = "UsersTopic"
 
-  def produceKafka(msg: String): Unit = {
+  def produceKafka(msg: String): Future[Unit] = Future {
 
     val producer = new KafkaProducer[String, String](props)
 
