@@ -16,23 +16,17 @@ object Producer extends LazyLogging {
   props.put("client.id", "KafkaProducerExample")
   props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
   props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
-
-  val rnd = new Random()
-  val events = 1
   val topic: String = "UsersTopic"
 
   def produceKafka(msg: String): Future[Unit] = Future {
 
     val producer = new KafkaProducer[String, String](props)
 
-    for (nEvents <- Range(0, events)) {
-      val data = new ProducerRecord[String, String](topic, msg)
+    val data = new ProducerRecord[String, String](topic, msg)
 
-      producer.send(data, (_, _) => {
-        logger.info("Message sent to Kafka : " + msg)
-      })
-
-    }
+    producer.send(data, (_, _) => {
+      logger.info("Message sent to Kafka : " + msg)
+    })
     producer.close()
   }
 
