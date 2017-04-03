@@ -31,7 +31,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka"           %%  "akka-http-spray-json"          % "10.0.4",
   "com.outworkers"              %%  "phantom-dsl"                   % "2.3.1",
   "org.cassandraunit"           %   "cassandra-unit"                % "3.1.1.0"   % "it,test",
-  "org.apache.kafka"            %   "kafka-clients"                 % "0.10.2.0"
+  "org.apache.kafka"            %   "kafka-clients"                 % "0.10.2.0",
+  "net.manub"                   %% "scalatest-embedded-kafka"       % "0.12.0"
 )
 
 coverageEnabled := false

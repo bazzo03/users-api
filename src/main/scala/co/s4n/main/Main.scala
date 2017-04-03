@@ -25,7 +25,7 @@ object Main {
     val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
     StdIn.readLine()
 
-    //Shutdown
+    // Shutdown
     bindingFuture
       .flatMap(_.unbind())
       .onComplete(_ => system.terminate())

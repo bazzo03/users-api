@@ -11,9 +11,11 @@ trait CassandraSpec extends TestSuite {
     PatienceConfig(timeout = Span(15, Seconds), interval = Span(500, Millis))
 
   override def beforeAll(): Unit = {
-    EmbeddedCassandraServerHelper
-      .startEmbeddedCassandra("embedded-cassandra.yaml", 120.seconds.toMillis)
-    database.create(5.seconds)
-    super.beforeAll()
+    synchronized {
+      EmbeddedCassandraServerHelper
+        .startEmbeddedCassandra("embedded-cassandra.yaml", 120.seconds.toMillis)
+      database.create(5.seconds)
+      super.beforeAll()
+    }
   }
 }
