@@ -4,6 +4,7 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.model.{ StatusCode, StatusCodes }
 import akka.http.scaladsl.server.Directives
 import co.s4n.infrastructure.kafka.Producer
+import co.s4n.reactiveKafka.ReactiveProducer
 import co.s4n.user.entity.User
 import co.s4n.user.service.UserService
 import com.outworkers.phantom.dsl.ResultSet
@@ -29,7 +30,8 @@ object UsersRoute extends Directives with SprayJsonSupport with DefaultJsonProto
           val future: Future[Option[User]] = UserService.findUser(id)
           val response: Future[(StatusCode, User)] = future.map {
             case Some(user) =>
-              Producer.produceKafka("User was consulted: " + user)
+                Producer.produceKafka("User was consulted: " + user)
+//              ReactiveProducer.produce("User was consulted: " + user)
               (StatusCodes.OK, user)
             case None =>
               Producer.produceKafka("Attempt to consult user, but no user found. Id was : " + id)
